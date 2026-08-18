@@ -6,6 +6,10 @@ Accepted. Extracted from `heitorsDev/session-guard` ADRs 0006
 (`branching-and-release-strategy`) and 0008 (`semver-bump-by-branch-prefix`),
 as adopted by `heitorsDev/cc-discord` ADR 0006.
 
+The `.js` paths below predate [0003](./0003-typescript-run-from-source-no-build.md),
+which moved the source to `.ts`. The decision is unchanged; only the extension
+is. Left as written rather than rewritten.
+
 ## Context
 
 Tickets ship independently rather than as one change, and versions should exist

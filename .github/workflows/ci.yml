@@ -26,3 +26,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - name: verify release path
+        # Bash + throwaway git repos; the bump rule itself is covered on both
+        # legs by npm test.
+        if: runner.os == 'Linux'
+        run: bash scripts/verify-release.sh
