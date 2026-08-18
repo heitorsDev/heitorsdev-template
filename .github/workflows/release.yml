@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - name: Resolve current and next versions
         id: next-version
         env:
@@ -39,7 +39,7 @@ jobs:
             CURRENT_VERSION="${RAW_TAG#v}"
           fi
           echo "Current version: ${CURRENT_VERSION}"
-          if ! NEW_VERSION="$(node bin/next-version.js "${CURRENT_VERSION}" "${HEAD_BRANCH}")"; then
+          if ! NEW_VERSION="$(node bin/next-version.ts "${CURRENT_VERSION}" "${HEAD_BRANCH}")"; then
             echo "::debug::next-version CLI rejected branch '${HEAD_BRANCH}' from '${CURRENT_VERSION}'"
             exit 0
           fi

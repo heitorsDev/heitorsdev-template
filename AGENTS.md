@@ -38,7 +38,10 @@ points here — never duplicate content between the two.
 - Triggers: `pull_request` (any base — covers `feat/*` → `release/*` and
   `release/*` → `main`) and `push` to `release/**`.
 - Matrix: `ubuntu-latest` + `windows-latest`, `fail-fast: false`.
-- Steps: `npm ci`, `npm run lint`, `npm test`.
+- Steps: `npm ci`, `npm run typecheck`, `npm run lint`, `npm test` — three
+  separate steps so a red run names the one that failed.
+- Node `22` (the floor declared in `engines`, not the newest release), so a
+  feature that only exists on 24+ fails CI instead of shipping.
 
 Rules that keep it meaningful:
 
@@ -51,8 +54,10 @@ Rules that keep it meaningful:
   own directory. This is what keeps the Windows leg green.
 - **No live anything in CI**: no network, no real external process, no real
   credentials, no live session. Fixtures and injected boundaries only.
-- **Before opening a PR, run `npm run lint && npm test` locally.** Reporting
-  work as done without them is a false completion.
+- **Before opening a PR, run `npm run verify` locally** (typecheck → lint →
+  test). Reporting work as done without it is a false completion.
+- **`npm run typecheck` is load-bearing, not a convenience.** Node strips types
+  without checking them, so nothing else catches a type error.
 - **The release workflow is not a gate** and must never be relied on as one.
 
 ## Releases
@@ -75,7 +80,7 @@ Rules that keep it meaningful:
   itself. Change the rule in the module and its test, never in YAML.
 - Never create tags or GitHub Releases by hand. No human types a version number
   anywhere.
-- Before changing anything in `src/release/`, `bin/next-version.js`, or
+- Before changing anything in `src/release/`, `bin/next-version.ts`, or
   `release.yml`, run both `npm test` and `scripts/verify-release.sh` (the latter
   replays the workflow's shell against throwaway git repos and asserts every
   bump case). The full matrix lives in `docs/release-check.md`.
@@ -97,7 +102,35 @@ Bootstrap them in a fresh repo with `scripts/bootstrap-labels.sh`.
 ### Domain docs
 
 Single-context — `CONTEXT.md` + `docs/adr/` at repo root. See
-`docs/agents/domain.md`.
+`docs/agents/domain.md`. `CONTEXT.md` is created lazily by `/domain-modeling`
+when a term actually gets resolved — its absence is not a gap to fill.
+
+### Skill map
+
+Which skill reads which file, and the spec → tickets → implement → review flow
+this template is built around: `docs/agents/skills.md`. The three adapter files
+are already configured for GitHub Issues — don't re-run
+`/setup-matt-pocock-skills` unless switching trackers.
+
+## TypeScript
+
+- Source is `.ts`, run directly by Node's type stripping. **No build step, no
+  `dist/`, no bundler** — what you edit is what runs. See
+  [ADR 0003](./docs/adr/0003-typescript-run-from-source-no-build.md).
+- **Erasable syntax only**: no `enum`, no `namespace`, no parameter properties.
+  Use a `const` object plus a union type. `erasableSyntaxOnly` enforces it.
+- **Imports carry the `.ts` extension** — that's what Node resolves at runtime.
+- Strictness is maximal (`strict`, `noUncheckedIndexedAccess`,
+  `exactOptionalPropertyTypes`, and friends). Loosening any flag is an ADR, not
+  a commit. Never reach for `any`, `as` casts, or `@ts-expect-error` to silence a
+  real error — fix the type or narrow properly.
+- Public functions get explicit return types. Prefer `unknown` at untrusted
+  boundaries (argv, JSON, hook stdin) and narrow with a guard.
+- Lint is type-aware, so `no-floating-promises` and `no-misused-promises` fire —
+  don't disable them outside `*.test.ts`, where `node:test`'s top-level `test()`
+  is legitimately unawaited.
+- Tests are `.ts` beside their subject (`*.test.ts`), run by `node --test`. No
+  test framework, no transform.
 
 ## Code quality
 

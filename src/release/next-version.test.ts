@@ -1,10 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { bumpTypeFromBranch, bumpVersion } from "./next-version.js";
+import { bumpTypeFromBranch, bumpVersion } from "./next-version.ts";
 
 test("bumpTypeFromBranch returns patch for fix/*", () => {
   assert.equal(bumpTypeFromBranch("fix/x"), "patch");
+  assert.equal(bumpTypeFromBranch("fix/a/b/c"), "patch");
 });
 
 test("bumpTypeFromBranch returns minor for feat/*", () => {
@@ -20,16 +21,24 @@ test("bumpTypeFromBranch returns major for release/*", () => {
 test("bumpTypeFromBranch returns null for unrecognised prefixes", () => {
   assert.equal(bumpTypeFromBranch("main"), null);
   assert.equal(bumpTypeFromBranch("docs/x"), null);
+  assert.equal(bumpTypeFromBranch("chore/x"), null);
   assert.equal(bumpTypeFromBranch(""), null);
   assert.equal(bumpTypeFromBranch("release"), null);
   assert.equal(bumpTypeFromBranch("feature/x"), null);
   assert.equal(bumpTypeFromBranch("fixes/x"), null);
 });
 
+test("bumpTypeFromBranch returns null for non-string input", () => {
+  assert.equal(bumpTypeFromBranch(undefined), null);
+  assert.equal(bumpTypeFromBranch(null), null);
+  assert.equal(bumpTypeFromBranch(42), null);
+});
+
 test("bumpVersion patch increments the patch segment only", () => {
   assert.equal(bumpVersion("0.0.0", "patch"), "0.0.1");
   assert.equal(bumpVersion("1.2.3", "patch"), "1.2.4");
   assert.equal(bumpVersion("0.0.9", "patch"), "0.0.10");
+  assert.equal(bumpVersion("1.9.0", "patch"), "1.9.1");
 });
 
 test("bumpVersion minor zeroes patch and increments minor", () => {
@@ -57,4 +66,9 @@ test("bumpVersion returns null for malformed currentVersion", () => {
   assert.equal(bumpVersion("v1.2.3", "patch"), null);
   assert.equal(bumpVersion(" 1.2.3", "patch"), null);
   assert.equal(bumpVersion("", "patch"), null);
+});
+
+test("bumpVersion returns null for non-string currentVersion", () => {
+  assert.equal(bumpVersion(undefined, "patch"), null);
+  assert.equal(bumpVersion(123, "patch"), null);
 });

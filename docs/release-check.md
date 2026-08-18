@@ -31,13 +31,13 @@ A closed-but-unmerged PR produces nothing — it requires `merged == true`.
 ## Running the check
 
 ```bash
-npm test                      # unit tests for the bump module
+npm run verify                # typecheck + lint + unit tests for the bump module
 scripts/verify-release.sh     # replays release.yml's shell against real git repos
 ```
 
 `scripts/verify-release.sh` builds a throwaway repo per row above, runs the
 workflow step's exact shell body, and asserts the tag that would be pushed. Both
-must pass before touching anything in `src/release/`, `bin/next-version.js`, or
+must pass before touching anything in `src/release/`, `bin/next-version.ts`, or
 `release.yml`.
 
 ## Fail-soft, not fail-red

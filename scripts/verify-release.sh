@@ -28,7 +28,7 @@ resolve() {
     else
       CURRENT_VERSION="${RAW_TAG#v}"
     fi
-    if ! NEW_VERSION="$(node bin/next-version.js "${CURRENT_VERSION}" "${head_branch}" 2>/dev/null)"; then
+    if ! NEW_VERSION="$(node bin/next-version.ts "${CURRENT_VERSION}" "${head_branch}" 2>/dev/null)"; then
       exit 0
     fi
     if [ -z "${NEW_VERSION}" ]; then

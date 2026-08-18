@@ -23,17 +23,20 @@ SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FILES=(
   ".github/workflows/ci.yml"
   ".github/workflows/release.yml"
-  "src/release/next-version.js"
-  "src/release/next-version.test.js"
-  "bin/next-version.js"
+  "src/release/next-version.ts"
+  "src/release/next-version.test.ts"
+  "bin/next-version.ts"
   "eslint.config.js"
+  "tsconfig.json"
   "AGENTS.md"
   "CLAUDE.md"
   "docs/agents/domain.md"
   "docs/agents/issue-tracker.md"
   "docs/agents/triage-labels.md"
+  "docs/agents/skills.md"
   "docs/adr/0001-ci-matrix-and-merge-gate.md"
   "docs/adr/0002-branching-and-semver-by-branch-prefix.md"
+  "docs/adr/0003-typescript-run-from-source-no-build.md"
   "docs/release-check.md"
   "scripts/bootstrap-labels.sh"
   "scripts/verify-release.sh"
@@ -71,10 +74,15 @@ cat <<EOF
 next steps in ${TARGET}:
   1. Replace <owner>/<repo> in AGENTS.md with ${REPO_SLUG:-<owner>/<repo>}.
   2. Delete the "Adopting this template" quote block at the top of AGENTS.md.
-  3. Add to package.json: "type": "module", "scripts": { "test": "node --test",
-     "lint": "eslint ." }, devDependencies @eslint/js + eslint ^9.
+  3. package.json: "type": "module", "engines": { "node": ">=22.18" }, scripts
+     typecheck ("tsc --noEmit") / lint ("eslint .") / test ("node --test
+     src/**/*.test.ts") / verify (all three), and devDependencies @eslint/js,
+     eslint ^9, typescript ^5.9, typescript-eslint ^8, @types/node.
   4. Leave package.json "version" at 0.0.0 — git tags are the source of truth.
-  5. npm install && npm run lint && npm test
-  6. scripts/bootstrap-labels.sh  (creates the 5 triage labels)
-  7. Protect main: require the ci checks, require a PR.
+  5. npm install && npm run verify
+  6. scripts/bootstrap-labels.sh  (triage + wayfinder labels)
+  7. scripts/verify-release.sh    (asserts every version-bump case)
+  8. Protect main: require the ci checks, require a PR.
+  9. Already-JS repo? Either rename to .ts incrementally (Node runs both) or
+     drop tsconfig.json and the typecheck script and keep the rest.
 EOF

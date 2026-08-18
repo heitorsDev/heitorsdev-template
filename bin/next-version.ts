@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { bumpTypeFromBranch, bumpVersion } from "../src/release/next-version.js";
+import { bumpTypeFromBranch, bumpVersion } from "../src/release/next-version.ts";
 
 const [, , currentVersionArg, branchNameArg] = process.argv;
 
