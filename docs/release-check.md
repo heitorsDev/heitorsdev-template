@@ -44,7 +44,7 @@ must pass before touching anything in `src/release/`, `bin/next-version.ts`, or
 
 ## Fail-soft, not fail-red
 
-An unrecognised prefix makes `bin/next-version.js` exit non-zero; the workflow
+An unrecognised prefix makes `bin/next-version.ts` exit non-zero; the workflow
 step catches that and exits `0` without setting an output, so the tag and
 release steps are skipped by their `if:` guards. A `docs/*` merge therefore shows
 a **green** release run that did nothing — that's correct, not a silent failure.

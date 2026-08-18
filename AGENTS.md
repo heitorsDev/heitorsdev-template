@@ -75,14 +75,14 @@ Rules that keep it meaningful:
   `--generate-notes`.
 - **`package.json`'s `version` is not kept in sync.** Git tags are the sole
   source of truth — leave it at `0.0.0` and never bump it in a PR.
-- **The bump rule is a tested module, not shell.** `src/release/next-version.js`
-  exports `bumpTypeFromBranch()` and `bumpVersion()`; `bin/next-version.js` is
+- **The bump rule is a tested module, not shell.** `src/release/next-version.ts`
+  exports `bumpTypeFromBranch()` and `bumpVersion()`; `bin/next-version.ts` is
   the CLI the workflow calls. The workflow's `run:` block computes nothing
   itself. Change the rule in the module and its test, never in YAML.
 - Never create tags or GitHub Releases by hand. No human types a version number
   anywhere.
 - Before changing anything in `src/release/`, `bin/next-version.ts`, or
-  `release.yml`, run both `npm test` and `scripts/verify-release.sh` (the latter
+  `release.yml`, run both `npm run verify` and `scripts/verify-release.sh` (the latter
   replays the workflow's shell against throwaway git repos and asserts every
   bump case). The full matrix lives in `docs/release-check.md`.
 - Out of scope: changelog generation, registry publishing, marketplace
@@ -142,7 +142,7 @@ are already configured for GitHub Issues — don't re-run
   glue code needed rather than taking a dependency. Dev dependencies for
   lint/test only.
 - Module layout: `vendors` / `controller` / `service`. Entry points (hooks,
-  bins, handlers) are thin stdin/stdout adapters over a `service.js` that holds
+  bins, handlers) are thin stdin/stdout adapters over a `service.ts` that holds
   the logic and takes its I/O boundaries as injectable options.
 - Every decision worth arguing about lands as an ADR in `docs/adr/`, numbered
   sequentially, with a `## Status` / `## Context` / `## Decision` /
