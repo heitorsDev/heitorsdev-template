@@ -36,7 +36,9 @@ scripts/verify-release.sh     # replays release.yml's shell against real git rep
 ```
 
 `scripts/verify-release.sh` builds a throwaway repo per row above, runs the
-workflow step's exact shell body, and asserts the tag that would be pushed. Both
+workflow step's exact shell body, and asserts the tag that would be pushed. CI
+runs it on the Linux leg of every PR (it needs bash and real git repos; the bump
+module itself is unit-tested on both legs). Both
 must pass before touching anything in `src/release/`, `bin/next-version.ts`, or
 `release.yml`.
 

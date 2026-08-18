@@ -39,7 +39,8 @@ points here — never duplicate content between the two.
   `release/*` → `main`) and `push` to `release/**`.
 - Matrix: `ubuntu-latest` + `windows-latest`, `fail-fast: false`.
 - Steps: `npm ci`, `npm run typecheck`, `npm run lint`, `npm test` — three
-  separate steps so a red run names the one that failed.
+  separate steps so a red run names the one that failed — then
+  `scripts/verify-release.sh` on the Linux leg.
 - Node `22` (the floor declared in `engines`, not the newest release), so a
   feature that only exists on 24+ fails CI instead of shipping.
 

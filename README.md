@@ -18,7 +18,7 @@ structure into an existing one.
 
 | Path | What it is |
 | ---- | ---------- |
-| `.github/workflows/ci.yml` | `npm ci` → `typecheck` → `lint` → `test` on `ubuntu-latest` + `windows-latest`, Node 22. The merge gate. |
+| `.github/workflows/ci.yml` | `npm ci` → `typecheck` → `lint` → `test` on `ubuntu-latest` + `windows-latest`, Node 22, plus the release-path check on the Linux leg. The merge gate. |
 | `.github/workflows/release.yml` | On PR merged to `main`: tag + GitHub Release, version computed from the branch prefix. |
 | `src/release/next-version.ts` | The bump rule as a tested module — `bumpTypeFromBranch()`, `bumpVersion()`. |
 | `src/release/next-version.test.ts` | Its tests (`node --test`, no framework). |
